@@ -2,6 +2,9 @@
 
 package lesson2
 
+import java.io.File
+import java.lang.IllegalArgumentException
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -27,7 +30,30 @@ package lesson2
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-    TODO()
+    val text = File(inputName).readLines()
+
+    if (text.any { it.matches(Regex("\\D")) } || text.size < 2) {
+        throw IllegalArgumentException()
+    }
+
+    val prices = text.map { it.toInt() }
+
+    var max = prices[1] - prices[0]
+    var min = 0
+    var res = Pair(1, 2)
+
+    for (i in 2 until prices.size) {
+        val current = prices[i] - prices[min]
+
+        if (current > max) {
+            max = current
+            res = Pair(min + 1, i + 1)
+        }
+
+        if (prices[i] < prices[min]) min = i
+    }
+
+    return res // Трудоемкость - O(n), ресурсоемкость - О(n)
 }
 
 /**
@@ -95,7 +121,25 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * вернуть ту из них, которая встречается раньше в строке first.
  */
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+    val arr = Array(first.length + 1) { IntArray(second.length + 1) { 0 } }
+    var max = 0
+    var res = ""
+
+    for (i in 1..first.length) {
+        for (j in 1..second.length) {
+            if (first[i - 1] == second[j - 1]) {
+                arr[i][j] = arr[i - 1][j - 1] + 1
+                if (arr[i][j] > max) {
+                    max = arr[i][j]
+                    res = first.substring(i - max, i)
+                }
+            } else {
+                arr[i][j] = 0
+            }
+        }
+    }
+
+    return res // Трудоемкость - О(first.size * second.size), ресурсоемкость - О(first.size * second.size)
 }
 
 /**

@@ -1,7 +1,9 @@
 package lesson2
 
+import org.junit.jupiter.api.assertThrows
 import java.io.BufferedWriter
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -46,6 +48,9 @@ abstract class AbstractAlgorithmsTests {
         assertEquals(3 to 4, optimizeBuyAndSell("input/buysell_in1.txt"))
         assertEquals(8 to 12, optimizeBuyAndSell("input/buysell_in2.txt"))
         assertEquals(3 to 4, optimizeBuyAndSell("input/buysell_in3.txt"))
+        assertThrows<IllegalArgumentException> { optimizeBuyAndSell("input/buysell_in4.txt") }
+        assertThrows<IllegalArgumentException> { optimizeBuyAndSell("input/buysell_in5.txt") }
+        assertEquals(1 to 2, optimizeBuyAndSell("input/buysell_in6.txt"))
         try {
             val expectedAnswer = generatePrices(1000)
             assertEquals(expectedAnswer, optimizeBuyAndSell("temp_prices.txt"))
@@ -74,6 +79,10 @@ abstract class AbstractAlgorithmsTests {
     }
 
     fun longestCommonSubstring(longestCommonSubstring: (String, String) -> String) {
+        assertEquals("ma", longestCommonSubstring("imagination", "mayonnaise"))
+        assertEquals("", longestCommonSubstring("", ""))
+        assertEquals("ожно", longestCommonSubstring("возможность", "Можно"))
+        assertEquals("я", longestCommonSubstring("яма", "япония"))
         assertEquals("", longestCommonSubstring("мой мир", "я"))
         assertEquals("зд", longestCommonSubstring("здравствуй мир", "мы здесь"))
         assertEquals("СЕРВАТОР", longestCommonSubstring("ОБСЕРВАТОРИЯ", "КОНСЕРВАТОРЫ"))

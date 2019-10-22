@@ -2,6 +2,9 @@
 
 package lesson1
 
+import java.io.File
+import java.lang.IllegalArgumentException
+
 /**
  * Сортировка времён
  *
@@ -97,8 +100,14 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 121.3
  */
 fun sortTemperatures(inputName: String, outputName: String) {
-    TODO()
-}
+    val inputs = File(inputName).readLines().map { (it.toDouble() * 10 + 2730.0).toInt() }
+
+    val sorted = countingSort(inputs.toIntArray(), inputs.max()!!)
+
+    File(outputName).bufferedWriter().use { file ->
+        file.write(sorted.map { (it.toDouble() - 2730.0) / 10 }.joinToString(separator = "\n"))
+    }
+} // Трудоемкость - O(n), ресурсоемкость - О(n)
 
 /**
  * Сортировка последовательности
@@ -130,8 +139,30 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  */
 fun sortSequence(inputName: String, outputName: String) {
-    TODO()
-}
+    val seq = File(inputName).readLines().map { it.toInt() }
+    val map = mutableMapOf<Int, Int>()
+
+    seq.forEach {
+        map[it] = if (!map.containsKey(it)) 1 else map[it]!! + 1
+    }
+
+    val number = map.maxBy { it.value }!!.key
+    val freq = map.maxBy { it.value }!!.value
+    var smallest = number
+
+    map.forEach {
+        if (it.value == freq && it.key < number) {
+            smallest = it.key
+        }
+    }
+
+    val lists = seq.partition { it != smallest }
+    val res = lists.first + lists.second
+
+    File(outputName).bufferedWriter().use {
+        it.write(res.joinToString(separator = "\n"))
+    }
+} // Трудоемкость - O(n), ресурсоемкость - О(n)
 
 /**
  * Соединить два отсортированных массива в один
