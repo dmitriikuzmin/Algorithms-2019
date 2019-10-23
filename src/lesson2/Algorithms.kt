@@ -54,7 +54,8 @@ fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
         if (prices[i] < prices[min]) min = i
     }
 
-    return res // Трудоемкость - O(n), ресурсоемкость - О(n)
+    return res
+    // Трудоемкость - O(n), ресурсоемкость - О(n)
 }
 
 /**
@@ -122,25 +123,31 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * вернуть ту из них, которая встречается раньше в строке first.
  */
 fun longestCommonSubstring(first: String, second: String): String {
-    val arr = Array(first.length + 1) { IntArray(second.length + 1) { 0 } }
+    var old = IntArray(second.length) { 0 }
+    var new = IntArray(second.length) { 0 }
     var max = 0
-    var res = ""
+    var pointer = 0
 
-    for (i in 1..first.length) {
-        for (j in 1..second.length) {
-            if (first[i - 1] == second[j - 1]) {
-                arr[i][j] = arr[i - 1][j - 1] + 1
-                if (arr[i][j] > max) {
-                    max = arr[i][j]
-                    res = first.substring(i - max, i)
+    for (i in 0 until first.length) {
+        for (j in 0 until second.length) {
+            var newVal = 0
+            if (first[i] == second[j]) {
+                newVal = if (j == 0 || i == 0) 1 else old[j - 1] + 1
+
+                if (newVal > max) {
+                    max = newVal
+                    pointer = j + 1
                 }
-            } else {
-                arr[i][j] = 0
             }
+            new[j] = newVal
         }
-    }
 
-    return res // Трудоемкость - О(first.length * second.length), ресурсоемкость - О(first.length * second.length)
+        val temp = old
+        old = new
+        new = temp
+    }
+    return second.substring(pointer - max, pointer)
+    // Трудоемкость - O(first.length * second.length), ресурсоемкость - О(second.length)
 }
 
 /**
