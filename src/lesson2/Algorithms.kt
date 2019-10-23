@@ -30,7 +30,8 @@ import java.lang.IllegalArgumentException
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-    val text = File(inputName).readLines()
+    val text = mutableListOf<String>()
+    File(inputName).bufferedReader().useLines { lines -> lines.forEach { text.add(it) } }
 
     if (text.any { it.matches(Regex("\\D")) } || text.size < 2) {
         throw IllegalArgumentException()
@@ -139,7 +140,7 @@ fun longestCommonSubstring(first: String, second: String): String {
         }
     }
 
-    return res // Трудоемкость - О(first.size * second.size), ресурсоемкость - О(first.size * second.size)
+    return res // Трудоемкость - О(first.length * second.length), ресурсоемкость - О(first.length * second.length)
 }
 
 /**

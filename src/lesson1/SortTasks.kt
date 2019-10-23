@@ -3,7 +3,6 @@
 package lesson1
 
 import java.io.File
-import java.lang.IllegalArgumentException
 
 /**
  * Сортировка времён
@@ -100,7 +99,11 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 121.3
  */
 fun sortTemperatures(inputName: String, outputName: String) {
-    val inputs = File(inputName).readLines().map { (it.toDouble() * 10 + 2730.0).toInt() }
+    val inputs = mutableListOf<Int>()
+
+    File(inputName).bufferedReader().useLines { lines ->
+        lines.forEach { inputs.add((it.toDouble() * 10 + 2730.0).toInt()) }
+    }
 
     val sorted = countingSort(inputs.toIntArray(), inputs.max()!!)
 
@@ -139,7 +142,8 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  */
 fun sortSequence(inputName: String, outputName: String) {
-    val seq = File(inputName).readLines().map { it.toInt() }
+    val seq = mutableListOf<Int>()
+    File(inputName).bufferedReader().useLines { lines -> lines.forEach { seq.add(it.toInt()) } }
     val map = mutableMapOf<Int, Int>()
 
     seq.forEach {
