@@ -46,7 +46,7 @@ abstract class AbstractHeadTailTest {
         assertEquals(false, set.contains(8))
         assertEquals(false, set.contains(9))
         assertEquals(false, set.contains(10))
-
+        assertEquals(false, set.contains(11))
 
         set = tree.headSet(127)
         for (i in 1..10)
@@ -71,6 +71,7 @@ abstract class AbstractHeadTailTest {
         for (i in 1..10)
             assertEquals(true, set.contains(i))
 
+        assertEquals(false, set.contains(829))
     }
 
     protected fun doHeadSetRelationTest() {
@@ -86,6 +87,12 @@ abstract class AbstractHeadTailTest {
         assertFailsWith<IllegalArgumentException> { set.add(8) }
         assertEquals(8, set.size)
         assertEquals(13, tree.size)
+
+        tree.add(13)
+        assertFalse(set.contains(13))
+        tree.add(-5)
+        assertEquals(15, tree.size)
+        assertEquals(9, set.size)
     }
 
     protected fun doTailSetRelationTest() {
@@ -101,6 +108,8 @@ abstract class AbstractHeadTailTest {
         assertFailsWith<IllegalArgumentException> { set.add(-2) }
         assertEquals(9, set.size)
         assertEquals(13, tree.size)
+
+        assertFailsWith<IllegalArgumentException> { set.add(-10) }
     }
 
     protected fun doSubSetTest() {
@@ -118,6 +127,9 @@ abstract class AbstractHeadTailTest {
 
         assertFailsWith<IllegalArgumentException> { smallSet.add(2) }
         assertFailsWith<IllegalArgumentException> { smallSet.add(9) }
+
+        assertFailsWith<IllegalArgumentException> { smallSet.add(-1000) }
+        assertFailsWith<IllegalArgumentException> { smallSet.add(1000) }
 
         val allSet = tree.subSet(-128, 128)
         for (i in 1..10)
@@ -149,6 +161,11 @@ abstract class AbstractHeadTailTest {
         assertFailsWith<IllegalArgumentException> { set.add(20) }
         assertEquals(11, set.size)
         assertEquals(14, tree.size)
+        tree.add(16)
+        tree.add(17)
+        assertEquals(11, set.size)
+        assertEquals(16, tree.size)
+        tree.add(6)
+        assertEquals(11, set.size)
     }
-
 }

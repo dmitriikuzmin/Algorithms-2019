@@ -30,8 +30,7 @@ import java.lang.IllegalArgumentException
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-    val text = mutableListOf<String>()
-    File(inputName).bufferedReader().useLines { lines -> lines.forEach { text.add(it) } }
+    val text = File(inputName).bufferedReader().readLines().toMutableList()
 
     if (text.any { it.matches(Regex("\\D")) } || text.size < 2) {
         throw IllegalArgumentException()

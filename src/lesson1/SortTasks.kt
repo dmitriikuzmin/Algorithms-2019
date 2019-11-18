@@ -150,8 +150,9 @@ fun sortSequence(inputName: String, outputName: String) {
         map[it] = if (!map.containsKey(it)) 1 else map[it]!! + 1
     }
 
-    val number = map.maxBy { it.value }!!.key
-    val freq = map.maxBy { it.value }!!.value
+    val pair = map.maxBy { it.value }
+    val number = pair!!.key
+    val freq = pair.value
     var smallest = number
 
     map.forEach {

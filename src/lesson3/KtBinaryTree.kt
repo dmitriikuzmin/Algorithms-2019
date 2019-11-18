@@ -5,12 +5,11 @@ import kotlin.NoSuchElementException
 import kotlin.math.max
 
 // Attention: comparable supported but comparator is not
-class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSortedSet<T> {
+open class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSortedSet<T> {
 
     private var root: Node<T>? = null
 
     override var size = 0
-        private set
 
     private class Node<T>(val value: T) {
 
@@ -84,22 +83,42 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
     }
 
     inner class BinaryTreeIterator internal constructor() : MutableIterator<T> {
+        private var stack: Stack<Node<T>> = Stack()
+
+        init {
+            addLeft(root)
+        }
+
+        private fun addLeft(node: Node<T>?) {
+            var root = node
+            while (root != null) {
+                stack.push(root)
+                root = root.left
+            }
+        }
+
         /**
          * Проверка наличия следующего элемента
          * Средняя
          */
-        override fun hasNext(): Boolean {
-            // TODO
-            throw NotImplementedError()
-        }
+        override fun hasNext(): Boolean = stack.isNotEmpty() // Трудоемкость - O(1), Ресурсоемкость - O(1)
 
         /**
          * Поиск следующего элемента
          * Средняя
          */
         override fun next(): T {
-            // TODO
-            throw NotImplementedError()
+            if (!hasNext()) throw NoSuchElementException()
+
+            val node = stack.pop()
+            val right = node.right
+
+            if (right != null) {
+                addLeft(right)
+            }
+
+            return node.value
+            // Трудоемкость в худшем случае - O(n), в среднем случае - O(1), Ресурсоемкость - O(высота дерева)
         }
 
         /**
@@ -116,29 +135,47 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
 
     override fun comparator(): Comparator<in T>? = null
 
+    inner class BinarySubTree<T : Comparable<T>> internal constructor(
+        private val tree: KtBinaryTree<T>,
+        private val from: T?,
+        private val to: T?
+    ) : KtBinaryTree<T>() {
+
+        override var size: Int = 0
+            get() = tree.count { inRange(it) }
+
+        override fun add(element: T): Boolean {
+            if (!inRange(element)) {
+                throw IllegalArgumentException()
+            }
+            return tree.add(element)
+        }
+
+        private fun inRange(element: T) = (from == null || element >= from) && (to == null || element < to)
+
+        override fun contains(element: T): Boolean = tree.contains(element) && inRange(element)
+    }
+
     /**
      * Найти множество всех элементов в диапазоне [fromElement, toElement)
      * Очень сложная
      */
-    override fun subSet(fromElement: T, toElement: T): SortedSet<T> {
-        TODO()
-    }
+    override fun subSet(fromElement: T, toElement: T): SortedSet<T> = BinarySubTree(this, fromElement, toElement)
+    // Трудоемеость - O(1), Ресурсоемкость - O(1)
 
     /**
      * Найти множество всех элементов меньше заданного
      * Сложная
      */
-    override fun headSet(toElement: T): SortedSet<T> {
-        TODO()
-    }
+    override fun headSet(toElement: T): SortedSet<T> = BinarySubTree(this, null, toElement)
+    // Трудоемеость - O(1), Ресурсоемкость - O(1)
 
     /**
      * Найти множество всех элементов больше или равных заданного
      * Сложная
      */
-    override fun tailSet(fromElement: T): SortedSet<T> {
-        TODO()
-    }
+    override fun tailSet(fromElement: T): SortedSet<T> = BinarySubTree(this, fromElement, null)
+    // Трудоемеость - O(1), Ресурсоемкость - O(1)
 
     override fun first(): T {
         var current: Node<T> = root ?: throw NoSuchElementException()
