@@ -2,6 +2,8 @@
 
 package lesson6
 
+import java.io.File
+
 /**
  * Наибольшая общая подпоследовательность.
  * Средняя
@@ -31,7 +33,33 @@ fun longestCommonSubSequence(first: String, second: String): String {
  * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
  */
 fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
-    TODO()
+    val size = list.size
+
+    if (size == 0) return listOf()
+
+    val length = IntArray(size) { 1 }
+    val path = IntArray(size) { -1 }
+
+    for (i in list.indices) {
+        for (j in 0 until i) {
+            if (list[j] < list[i] && (length[i] < length[j] + 1)) {
+                length[i] = length[j] + 1
+                path[i] = j
+            }
+        }
+    }
+
+    var pointer = length.indexOf(length.max()!!)
+
+    val result = mutableListOf<Int>()
+
+    while (pointer != -1) {
+        result.add(list[pointer])
+        pointer = path[pointer]
+    }
+
+    return result.reversed()
+    // Трудоемкость - О(n^2), Ресурсоемкость - O(n)
 }
 
 /**
@@ -55,7 +83,38 @@ fun longestIncreasingSubSequence(list: List<Int>): List<Int> {
  * Здесь ответ 2 + 3 + 4 + 1 + 2 = 12
  */
 fun shortestPathOnField(inputName: String): Int {
-    TODO()
+    val lines = File(inputName).readLines().map { it.split(" ") }
+
+    val grid = mutableListOf<MutableList<Int>>()
+
+    for (i in lines.indices) {
+        grid.add(lines[i].map { it.toInt() }.toMutableList())
+    }
+
+    for (i in 1 until grid[0].size) {
+        grid[0][i] += grid[0][i - 1]
+    }
+
+    when {
+        grid.size == 1 -> return grid[0].last()
+        grid[0].size == 1 -> return grid.sumBy { it[0] }
+    }
+
+    var thisLine = mutableListOf<Int>()
+
+    for (i in 1 until grid.size) {
+        val prevLine = grid[i - 1]
+        thisLine = grid[i]
+
+        thisLine[0] += prevLine[0]
+
+        for (j in 1 until thisLine.size) {
+            thisLine[j] = thisLine[j] + minOf(thisLine[j - 1], prevLine[j - 1], prevLine[j])
+        }
+    }
+
+    return thisLine.last()
+    // Трудоемкость - O(ширина * длина поля), Ресурсоемкость - O(n)
 }
 
 // Задачу "Максимальное независимое множество вершин в графе без циклов"
